@@ -70,5 +70,5 @@ for key, value in types.items():
 # commit and push
 system("git add branches tags && git -c \"user.name=XiaomiFirmwareUpdater\" "
        "-c \"user.email=xiaomifirmwareupdater@gmail.com\" commit -m \"[skip ci] sync: {0}\" && "" \
-       ""git push -q https://{1}@github.com/yshalsager/aosp-tracker.git HEAD:master"
+       ""git push -q https://{1}@github.com/androidtrackers/aosp-tracker.git HEAD:master"
        .format(today, GIT_OAUTH_TOKEN))
