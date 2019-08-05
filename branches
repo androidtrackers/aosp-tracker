@@ -78,6 +78,7 @@ nougat-mr1-cts-release
 nougat-mr1-dev
 nougat-mr1-flounder-release
 nougat-mr1-release
+nougat-mr1-security-release
 nougat-mr1-volantis-release
 nougat-mr1-wear-release
 nougat-mr1.1-release
@@ -91,6 +92,7 @@ nougat-mr1.8-release
 nougat-mr2-dev
 nougat-mr2-pixel-release
 nougat-mr2-release
+nougat-mr2-security-release
 nougat-mr2.1-release
 nougat-mr2.2-release
 nougat-mr2.3-release
@@ -138,6 +140,7 @@ oreo-mr1-dev
 oreo-mr1-iot-release
 oreo-mr1-release
 oreo-mr1-s1-release
+oreo-mr1-security-release
 oreo-mr1-vts-release
 oreo-mr1-wear-release
 oreo-r2-release
@@ -146,6 +149,7 @@ oreo-r4-release
 oreo-r5-release
 oreo-r6-release
 oreo-release
+oreo-security-release
 oreo-vts-release
 pie-angle-preview-dev
 pie-b4s4-dev
