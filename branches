@@ -1,9 +1,11 @@
 master
 android10-dev
 android10-gsi
+android10-mainline-a-release
 android10-mainline-release
 android10-release
 android10-s1-release
+android10-s2-release
 android10-tests-dev
 android10-tests-release
 donut-release
