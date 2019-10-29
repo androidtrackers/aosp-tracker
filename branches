@@ -10,7 +10,6 @@ android10-s2-release
 android10-security-release
 android10-tests-dev
 android10-tests-release
-b_141248619
 donut-release
 donut-release2
 eclair-passion-release
@@ -193,7 +192,6 @@ pie-vts-release
 sdk-release
 simpleperf-release
 studio-master-dev
-temp_b_131756210_stage-aosp-master
 tools_r20
 tools_r21
 tools_r22
