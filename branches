@@ -6,6 +6,9 @@ android10-dev
 android10-gsi
 android10-mainline-a-release
 android10-mainline-release
+android10-qpr1-b-release
+android10-qpr1-b-s1-release
+android10-qpr1-c-s1-release
 android10-qpr1-mainline-release
 android10-qpr1-release
 android10-release
@@ -197,7 +200,6 @@ pie-vts-release
 sdk-release
 simpleperf-release
 studio-master-dev
-temp_b_145570283
 tools_r20
 tools_r21
 tools_r22
