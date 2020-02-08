@@ -5,7 +5,10 @@ android10-c2f2-s2-release
 android10-dev
 android10-gsi
 android10-mainline-a-release
+android10-mainline-media-release
+android10-mainline-networking-release
 android10-mainline-release
+android10-mainline-resolv-release
 android10-qpr1-b-release
 android10-qpr1-b-s1-release
 android10-qpr1-c-release
@@ -90,6 +93,7 @@ master-cuttlefish-testing-release
 master-soong
 n-iot-preview-2
 n-iot-preview-4
+ndk-sysroot-r21
 nougat-cts-release
 nougat-dev
 nougat-dr1-release
