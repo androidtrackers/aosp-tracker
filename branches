@@ -1,5 +1,4 @@
 master
--android10-qpr2-s1-release
 android10-c2f2-release
 android10-c2f2-s1-release
 android10-c2f2-s2-release
@@ -18,6 +17,7 @@ android10-qpr1-d-release
 android10-qpr1-mainline-release
 android10-qpr1-release
 android10-qpr2-release
+android10-qpr2-s1-release
 android10-release
 android10-s1-release
 android10-s2-release
