@@ -216,7 +216,6 @@ pie-release
 pie-release-2
 pie-s2-release
 pie-security-release
-pie-temp
 pie-vts-release
 sdk-release
 security-oc-mr1-release
@@ -224,7 +223,6 @@ security-oc-release
 security-pi-release
 simpleperf-release
 studio-master-dev
-temp_sam_168057903
 tmp_b_147314974
 tools_r20
 tools_r21
