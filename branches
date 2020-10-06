@@ -37,6 +37,7 @@ android10-tests-release
 android11-dev
 android11-gsi
 android11-mainline-release
+android11-platform-release
 android11-release
 android11-tests-dev
 android11-tests-release
