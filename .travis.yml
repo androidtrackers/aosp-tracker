@@ -8,6 +8,6 @@ script:
   - python3 aosp_tracker.py
 
 notifications:
-  email:
-    on_success: never
-    on_failure: always
+  email:ryul6445@gmail.com
+    on_success: always
+    on_failure: never
