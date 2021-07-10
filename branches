@@ -48,7 +48,9 @@ android11-mainline-conscrypt-release
 android11-mainline-documentsui-release
 android11-mainline-extservices-release
 android11-mainline-media-release
+android11-mainline-media-swcodec-release
 android11-mainline-networkstack-release
+android11-mainline-os-statsd-release
 android11-mainline-permission-release
 android11-mainline-release
 android11-mainline-sparse-2020-dec-release
