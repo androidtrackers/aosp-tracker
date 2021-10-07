@@ -76,6 +76,7 @@ android11-tests-dev
 android11-tests-release
 android12-dev
 android12-release
+android12-tests-dev
 donut-release
 donut-release2
 eclair-passion-release
