@@ -77,6 +77,7 @@ android11-tests-release
 android12-dev
 android12-gsi
 android12-release
+android12-s1-release
 android12-tests-dev
 android12-tests-release
 donut-release
