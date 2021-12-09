@@ -84,6 +84,15 @@ android12-d1-s5-release
 android12-d1-s6-release
 android12-dev
 android12-gsi
+android12-mainline-art-release
+android12-mainline-captiveportallogin-release
+android12-mainline-cellbroadcast-release
+android12-mainline-conscrypt-release
+android12-mainline-extservices-release
+android12-mainline-ipsec-release
+android12-mainline-media-release
+android12-mainline-media-swcodec-release
+android12-mainline-mediaprovider-release
 android12-platform-release
 android12-qpr1-release
 android12-release
