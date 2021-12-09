@@ -93,6 +93,13 @@ android12-mainline-ipsec-release
 android12-mainline-media-release
 android12-mainline-media-swcodec-release
 android12-mainline-mediaprovider-release
+android12-mainline-networkstack-release
+android12-mainline-permission-release
+android12-mainline-resolv-release
+android12-mainline-sdkext-release
+android12-mainline-tethering-release
+android12-mainline-tzdata3-release
+android12-mainline-wifi-release
 android12-platform-release
 android12-qpr1-release
 android12-release
