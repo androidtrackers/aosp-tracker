@@ -75,6 +75,7 @@ android11-s1-release
 android11-security-release
 android11-tests-dev
 android11-tests-release
+android12--mainline-release
 android12-d1-release
 android12-d1-s1-release
 android12-d1-s2-release
@@ -84,16 +85,19 @@ android12-d1-s5-release
 android12-d1-s6-release
 android12-dev
 android12-gsi
+android12-mainline-adbd-release
 android12-mainline-art-release
 android12-mainline-captiveportallogin-release
 android12-mainline-cellbroadcast-release
 android12-mainline-conscrypt-release
+android12-mainline-documentsui-release
 android12-mainline-extservices-release
 android12-mainline-ipsec-release
 android12-mainline-media-release
 android12-mainline-media-swcodec-release
 android12-mainline-mediaprovider-release
 android12-mainline-networkstack-release
+android12-mainline-neuralnetworks-release
 android12-mainline-permission-release
 android12-mainline-resolv-release
 android12-mainline-sdkext-release
