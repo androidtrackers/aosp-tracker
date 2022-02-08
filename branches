@@ -115,6 +115,8 @@ android12-release
 android12-s1-release
 android12-s2-release
 android12-s3-release
+android12-s4-release
+android12-s5-release
 android12-tests-dev
 android12-tests-release
 donut-release
