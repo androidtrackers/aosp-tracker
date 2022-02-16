@@ -104,7 +104,10 @@ android12-mainline-neuralnetworks-release
 android12-mainline-permission-release
 android12-mainline-resolv-release
 android12-mainline-sdkext-release
+android12-mainline-statsd-release
 android12-mainline-tethering-release
+android12-mainline-tzdata-release
+android12-mainline-tzdata2-release
 android12-mainline-tzdata3-release
 android12-mainline-wifi-release
 android12-platform-release
