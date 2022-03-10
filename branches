@@ -1,6 +1,7 @@
 master
 android-s-beta-4
 android-s-beta-5
+android-s-qpr3-beta-1
 android-s-v2-beta-3
 android-s-v2-preview-1
 android-t-preview-1
@@ -127,6 +128,7 @@ android12-tests-release
 android12L-dev
 android12L-platform-release
 android12L-release
+android12L-tests-dev
 donut-release
 donut-release2
 eclair-passion-release
