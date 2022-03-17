@@ -126,6 +126,7 @@ android12-s5-release
 android12-tests-dev
 android12-tests-release
 android12L-dev
+android12L-gsi
 android12L-platform-release
 android12L-release
 android12L-tests-dev
