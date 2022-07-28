@@ -133,6 +133,9 @@ android12-tests-dev
 android12-tests-release
 android12L-d2-release
 android12L-d2-s1-release
+android12L-d2-s2-release
+android12L-d2-s3-release
+android12L-d2-s4-release
 android12L-dev
 android12L-gsi
 android12L-platform-release
