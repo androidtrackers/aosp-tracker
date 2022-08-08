@@ -122,6 +122,7 @@ android12-qpr3-s1-release
 android12-qpr3-s2-release
 android12-qpr3-s3-release
 android12-qpr3-s4-release
+android12-qpr3-s5-release
 android12-qpr3-s6-release
 android12-qpr3-s7-release
 android12-release
@@ -139,6 +140,9 @@ android12L-d2-s2-release
 android12L-d2-s3-release
 android12L-d2-s4-release
 android12L-d2-s5-release
+android12L-d2-s6-release
+android12L-d2-s7-release
+android12L-d2-s8-release
 android12L-dev
 android12L-gsi
 android12L-platform-release
