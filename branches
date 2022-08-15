@@ -150,6 +150,10 @@ android12L-release
 android12L-s1-release
 android12L-tests-dev
 android12L-tests-release
+android13-dev
+android13-release
+android13-s1-release
+android13-security-release
 donut-release
 donut-release2
 eclair-passion-release
