@@ -160,6 +160,11 @@ android13-frc-ipsec-release
 android13-frc-media-release
 android13-frc-media-swcodec-release
 android13-frc-networking-release
+android13-frc-neuralnetworks-release
+android13-frc-os-statsd-release
+android13-frc-permission-release
+android13-frc-resolv-release
+android13-frc-scheduling-release
 android13-gsi
 android13-release
 android13-s1-release
