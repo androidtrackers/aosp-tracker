@@ -166,6 +166,13 @@ android13-frc-permission-release
 android13-frc-resolv-release
 android13-frc-scheduling-release
 android13-gsi
+android13-mainline-go-adbd-release
+android13-mainline-go-appsearch-release
+android13-mainline-go-art-release
+android13-mainline-go-cellbroadcast-release
+android13-mainline-go-conscrypt-release
+android13-mainline-go-documentsui-release
+android13-mainline-go-extservices-release
 android13-release
 android13-s1-release
 android13-s2-release
