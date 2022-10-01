@@ -173,6 +173,17 @@ android13-mainline-go-cellbroadcast-release
 android13-mainline-go-conscrypt-release
 android13-mainline-go-documentsui-release
 android13-mainline-go-extservices-release
+android13-mainline-go-ipsec-release
+android13-mainline-go-media-release
+android13-mainline-go-media-swcodec-release
+android13-mainline-go-mediaprovider-release
+android13-mainline-go-networking-release
+android13-mainline-go-neuralnetworks-release
+android13-mainline-go-os-statsd-release
+android13-mainline-go-permission-release
+android13-mainline-go-resolv-release
+android13-mainline-go-scheduling-release
+android13-mainline-go-tethering-release
 android13-release
 android13-s1-release
 android13-s2-release
