@@ -167,6 +167,7 @@ android13-frc-resolv-release
 android13-frc-scheduling-release
 android13-gsi
 android13-mainline-go-adbd-release
+android13-mainline-go-adservices-release
 android13-mainline-go-appsearch-release
 android13-mainline-go-art-release
 android13-mainline-go-cellbroadcast-release
@@ -179,10 +180,12 @@ android13-mainline-go-media-swcodec-release
 android13-mainline-go-mediaprovider-release
 android13-mainline-go-networking-release
 android13-mainline-go-neuralnetworks-release
+android13-mainline-go-odp-release
 android13-mainline-go-os-statsd-release
 android13-mainline-go-permission-release
 android13-mainline-go-resolv-release
 android13-mainline-go-scheduling-release
+android13-mainline-go-sdkext-release
 android13-mainline-go-tethering-release
 android13-mainline-go-tzdata4-release
 android13-mainline-go-uwb-release
