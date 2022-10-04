@@ -190,6 +190,7 @@ android13-mainline-go-tethering-release
 android13-mainline-go-tzdata4-release
 android13-mainline-go-uwb-release
 android13-mainline-go-wifi-release
+android13-platform-release
 android13-release
 android13-s1-release
 android13-s2-release
