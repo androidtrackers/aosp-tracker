@@ -151,6 +151,8 @@ android12L-s1-release
 android12L-tests-dev
 android12L-tests-release
 android13-d1-release
+android13-d1-s1-release
+android13-d1-s2-release
 android13-dev
 android13-frc-adbd-release
 android13-frc-art-release
