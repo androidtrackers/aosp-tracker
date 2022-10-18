@@ -196,6 +196,7 @@ android13-mainline-go-uwb-release
 android13-mainline-go-wifi-release
 android13-mainline-mediaprovider-release
 android13-mainline-networking-release
+android13-mainline-os-statsd-release
 android13-mainline-permission-release
 android13-mainline-resolv-release
 android13-mainline-tethering-release
