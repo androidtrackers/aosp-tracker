@@ -158,6 +158,7 @@ android13-frc-adbd-release
 android13-frc-art-release
 android13-frc-cellbroadcast-release
 android13-frc-conscrypt-release
+android13-frc-documentsui-release
 android13-frc-extservices-release
 android13-frc-ipsec-release
 android13-frc-media-release
@@ -207,8 +208,10 @@ android13-mainline-networking-release
 android13-mainline-os-statsd-release
 android13-mainline-permission-release
 android13-mainline-resolv-release
+android13-mainline-sdkext-release
 android13-mainline-tethering-release
 android13-mainline-tzdata4-release
+android13-mainline-uwb-release
 android13-mainline-wifi-release
 android13-platform-release
 android13-release
