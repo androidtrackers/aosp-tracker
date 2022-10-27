@@ -170,7 +170,11 @@ android13-frc-resolv-release
 android13-frc-scheduling-release
 android13-gsi
 android13-mainline-adbd-release
+android13-mainline-appsearch-release
+android13-mainline-art-release
 android13-mainline-cellbroadcast-release
+android13-mainline-conscrypt-release
+android13-mainline-extservices-release
 android13-mainline-go-adbd-release
 android13-mainline-go-adservices-release
 android13-mainline-go-appsearch-release
@@ -195,6 +199,9 @@ android13-mainline-go-tethering-release
 android13-mainline-go-tzdata4-release
 android13-mainline-go-uwb-release
 android13-mainline-go-wifi-release
+android13-mainline-ipsec-release
+android13-mainline-media-release
+android13-mainline-media-swcodec-release
 android13-mainline-mediaprovider-release
 android13-mainline-networking-release
 android13-mainline-os-statsd-release
