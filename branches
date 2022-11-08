@@ -171,6 +171,7 @@ android13-frc-resolv-release
 android13-frc-scheduling-release
 android13-gsi
 android13-mainline-adbd-release
+android13-mainline-adservices-release
 android13-mainline-appsearch-release
 android13-mainline-art-release
 android13-mainline-cellbroadcast-release
