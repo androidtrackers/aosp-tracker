@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.idea/
+
+*_old
+*_changes
