@@ -1,181 +1,278 @@
-#!/usr/bin/env python3.7
-"""AOSP tracker"""
+#!/usr/bin/env python
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#   "beautifulsoup4",
+#   "requests",
+# ]
+# ///
+"""AOSP tracker."""
 
-import difflib
+import argparse
+import os
+import re
+import subprocess
+from dataclasses import dataclass
 from datetime import date
-from itertools import groupby
-from os import environ, rename, path, system
+from pathlib import Path
+from time import sleep
 
 from bs4 import BeautifulSoup
-from requests import get, post
-
-URL = "https://android.googlesource.com/platform/frameworks/base/+refs"
-
-TG_CHAT = "@aosptracker"
-BOT_TOKEN = environ["bottoken"]
-GIT_OAUTH_TOKEN = environ["XFU"]
-BRANCHES = []
-TAGS = []
+from requests import Response, Session
+from requests.exceptions import RequestException
 
 
-def fetch():
-    """
-    fetch latest info
-    """
-    response = get(URL)
-    page = BeautifulSoup(response.content, "html.parser")
-    data = page.findAll("div", {"class": "RefList"})
-    for section in data:
+@dataclass(frozen=True, slots=True)
+class Settings:
+    refs_url: str = "https://android.googlesource.com/platform/frameworks/base/+refs"
+    refs_base_url: str = "https://android.googlesource.com/platform/frameworks/base/+"
+    bulletin_index_url: str = "https://source.android.com/docs/security/bulletin"
+    telegram_chat: str = "@aosptracker"
+    bot_token: str = ""
+    git_oauth_token: str = ""
+    request_timeout: int = 30
+    retry_attempts: int = 3
+    retry_delay_seconds: int = 2
+
+
+@dataclass(frozen=True, slots=True)
+class SecurityBulletinInfo:
+    latest: str
+    link: str
+    patch: str
+
+
+def read_lines(file_path: Path) -> list[str]:
+    if not file_path.exists():
+        return []
+    return [line.strip() for line in file_path.read_text().splitlines() if line.strip()]
+
+
+def write_lines(file_path: Path, lines: list[str]) -> None:
+    text = "\n".join(lines)
+    if text:
+        text += "\n"
+    file_path.write_text(text)
+
+
+def fetch_url(session: Session, url: str, cfg: Settings) -> Response:
+    last_error: Exception | None = None
+    for attempt in range(1, cfg.retry_attempts + 1):
+        try:
+            response = session.get(url, timeout=cfg.request_timeout)
+            response.raise_for_status()
+            return response
+        except RequestException as error:
+            last_error = error
+            if attempt < cfg.retry_attempts:
+                sleep(cfg.retry_delay_seconds * attempt)
+    raise RuntimeError(
+        f"GET {url} failed after {cfg.retry_attempts} attempts: {last_error}"
+    )
+
+
+def fetch_refs(session: Session, cfg: Settings) -> tuple[list[str], list[str]]:
+    page = BeautifulSoup(fetch_url(session, cfg.refs_url, cfg).content, "html.parser")
+    branches: list[str] = []
+    tags: list[str] = []
+    for section in page.find_all("div", {"class": "RefList"}):
         title = section.find("h3", {"class": "RefList-title"})
-        values = section.find_all("li")
-        if "Branches" in title.text:
-            for value in values:
-                BRANCHES.append(value.text)
-        elif "Tags" in title.text:
-            for value in values:
-                TAGS.append(value.text)
+        if title is None:
+            continue
+        values = [item.get_text(strip=True) for item in section.find_all("li")]
+        if "Branches" in title.get_text():
+            branches.extend(values)
+        elif "Tags" in title.get_text():
+            tags.extend(values)
+    if not branches or not tags:
+        raise RuntimeError("Failed to parse refs page (empty branches or tags)")
+    return branches, tags
 
 
-def diff_files():
-    """
-    diff
-    """
-    # diff
-    types = {"branches": BRANCHES, "tags": TAGS}
-    for key, value in types.items():
-        if path.exists(str(key)):
-            rename(str(key), str(key) + "_old")
-        # save to file
-        with open(str(key), "w") as out:
-            for i in value:
-                out.write(i + "\n")
-        with open(str(key) + "_old", "r") as old, open(str(key), "r") as new:
-            diff = difflib.unified_diff(
-                old.readlines(),
-                new.readlines(),
-                fromfile=str(key) + "_old",
-                tofile=str(key),
-            )
-        changes = []
-        for line in diff:
-            if line.startswith("+"):
-                changes.append(str(line))
-        new = "".join(changes[1:]).replace("+", "")
-        with open(str(key) + "_changes", "w") as out:
-            out.write(new)
-        # post to tg
-        with open(str(key) + "_changes", "r") as changes:
-            for line in changes:
-                if key == "branches":
-                    type_ = "branch"
-                elif key == "tags":
-                    type_ = "tag"
-                telegram_message = "New {0} detected! `{1}`" "[Check Here]({2})".format(
-                    type_, line, URL.split("/+")[0] + "/+/" + line
-                )
-                post_to_tg(telegram_message)
-
-
-def post_to_tg(telegram_message):
-    """
-    post new devices to telegram channel
-    """
+def post_to_telegram(session: Session, message: str, cfg: Settings) -> None:
+    if not cfg.bot_token:
+        raise RuntimeError("bottoken is required")
     params = (
-        ("chat_id", TG_CHAT),
-        ("text", telegram_message),
+        ("chat_id", cfg.telegram_chat),
+        ("text", message),
         ("parse_mode", "Markdown"),
         ("disable_web_page_preview", "yes"),
     )
-    telegram_url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage"
-    telegram_req = post(telegram_url, params=params)
-    telegram_status = telegram_req.status_code
-    if telegram_status == 200:
-        print("Telegram Message sent")
-    else:
-        print("Telegram Error")
+    telegram_url = f"https://api.telegram.org/bot{cfg.bot_token}/sendMessage"
+    response = session.post(telegram_url, params=params, timeout=cfg.request_timeout)
+    response.raise_for_status()
 
 
-def git_commit_push():
-    """
-        git add - git commit - git push
-    ="""
-    today = str(date.today())
-    system(
-        'git add branches tags security_patch && git -c "user.name=XiaomiFirmwareUpdater" '
-        '-c "user.email=xiaomifirmwareupdater@gmail.com"'
-        ' commit -m "[skip ci] sync: {0}" && '
-        " \
-           "
-        "git push -q https://{1}@github.com/androidtrackers/aosp-tracker.git HEAD:master".format(
-            today, GIT_OAUTH_TOKEN
+def update_refs_files(
+    session: Session,
+    refs_name: str,
+    values: list[str],
+    cfg: Settings,
+    send_telegram: bool,
+    max_telegram_messages: int,
+) -> None:
+    current_path = Path(refs_name)
+    old_path = Path(f"{refs_name}_old")
+    changes_path = Path(f"{refs_name}_changes")
+
+    previous_values = read_lines(current_path)
+    if current_path.exists():
+        current_path.replace(old_path)
+    elif not old_path.exists():
+        old_path.write_text("")
+
+    write_lines(current_path, values)
+    previous_values_set = set(previous_values)
+    changes = [value for value in values if value and value not in previous_values_set]
+    write_lines(changes_path, changes)
+
+    if not send_telegram:
+        return
+    if len(changes) > max_telegram_messages:
+        print(
+            f"Skipped Telegram for {refs_name}: {len(changes)} changes exceeds cap ({max_telegram_messages})"
         )
-    )
-
-
-def security_bulletin():
-    """
-    Android Security Bulletins
-    """
-    data = (
-        BeautifulSoup(
-            get("https://source.android.com/security/bulletin").content, "html.parser"
-        )
-        .find("table")
-        .findAll("tr")[1]
-    )
-    latest = data.findAll("td")[0].text
-    link = "https://source.android.com/" + data.findAll("td")[0].a["href"]
-    patch = data.findAll("td")[-1].text.replace(" ", "").replace("\n", " | ")
-    sbl_patches = ""
-    sbl_response = get(f"{link}?partial=1")
-    if sbl_response.ok and sbl_response.text.startswith("["):
-        sbl_data = [
-            i for i in sbl_response.json() if i and isinstance(i, str) and "CVE" in i
-        ]
-        page = BeautifulSoup(sbl_data[0].strip(), "html.parser")
-        patches = page.select('td a[href*="android.googlesource.com"]')
-        patches_groups = [
-            list(item)
-            for _, item in groupby(
-                sorted(patches, key=lambda x: x["href"]),
-                lambda x: "_".join(x.get("href", "").split("+")[0].split("/")[3:-1]),
-            )
-        ]
-        for patches_group in patches_groups:
-            sbl_patches += f'\n`{"_".join(patches_group[0].get("href", "").split("+")[0].split("/")[3:-1])}`:\n'
-            sbl_patches += " - ".join(
-                f"[{patch.text.strip()}]({patch.get('href')})"
-                for patch in patches_group
-            )
-
-    if path.exists("security_patch"):
-        rename("security_patch", "security_patch_old")
-    with open("security_patch", "w") as out:
-        out.write(latest)
-    with open("security_patch_old", "r") as old_file:
-        old = old_file.read()
-    if latest != old:
-        message = (
-            f"New Security Patch detected! [{latest}]({link})\n"
-            f"__Patch__: {patch}\n\n"
-        )
-        if sbl_patches:
-            message += "**Security Patch Commits:**"
-            message += sbl_patches
-        post_to_tg(message)
-    else:
         return
 
+    ref_type = "branch" if refs_name == "branches" else "tag"
+    for ref_name in changes:
+        message = f"New {ref_type} detected! `{ref_name}` [Check Here]({cfg.refs_base_url}/{ref_name})"
+        post_to_telegram(session, message, cfg)
 
-def main():
-    """
-    Main scraping script
-    """
-    fetch()
-    diff_files()
-    security_bulletin()
-    git_commit_push()
+
+def fetch_security_bulletin(session: Session, cfg: Settings) -> SecurityBulletinInfo:
+    bulletin_page = BeautifulSoup(
+        fetch_url(session, cfg.bulletin_index_url, cfg).content, "html.parser"
+    )
+    bulletin_links: list[tuple[str, str]] = []
+    for item in bulletin_page.find_all("a", href=True):
+        href_attr = item.get("href")
+        if not isinstance(href_attr, str):
+            continue
+        href = href_attr
+        if "/docs/security/bulletin/" not in href:
+            continue
+        match = re.search(r"(\d{4}-\d{2}-\d{2})/?$", href)
+        if match:
+            bulletin_links.append((match.group(1), href))
+    if not bulletin_links:
+        raise RuntimeError("Failed to parse security bulletin links")
+
+    latest, latest_path = max(bulletin_links)
+    link = (
+        latest_path
+        if latest_path.startswith("http")
+        else f"https://source.android.com{latest_path}"
+    )
+    detail_text = BeautifulSoup(
+        fetch_url(session, link, cfg).content, "html.parser"
+    ).get_text(" ", strip=True)
+    patch_levels = sorted(set(re.findall(r"\b\d{4}-\d{2}-(?:01|05)\b", detail_text)))
+    patch = " | ".join(patch_levels) if patch_levels else latest
+    return SecurityBulletinInfo(latest=latest, link=link, patch=patch)
+
+
+def update_security_patch(
+    session: Session, bulletin: SecurityBulletinInfo, cfg: Settings, send_telegram: bool
+) -> None:
+    current_path = Path("security_patch")
+    old_path = Path("security_patch_old")
+
+    if not current_path.exists():
+        current_path.write_text(bulletin.latest)
+        return
+
+    previous_value = current_path.read_text().strip()
+    current_path.replace(old_path)
+    current_path.write_text(bulletin.latest)
+
+    if bulletin.latest == previous_value:
+        return
+    if not send_telegram:
+        return
+
+    message = f"New Security Patch detected! [{bulletin.latest}]({bulletin.link})\n__Patch__: {bulletin.patch}\n"
+    post_to_telegram(session, message, cfg)
+
+
+def git_commit_push(cfg: Settings) -> None:
+    if not cfg.git_oauth_token:
+        raise RuntimeError("XFU is required")
+    today = str(date.today())
+    subprocess.run(["git", "add", "branches", "tags", "security_patch"], check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=XiaomiFirmwareUpdater",
+            "-c",
+            "user.email=xiaomifirmwareupdater@gmail.com",
+            "commit",
+            "-m",
+            f"[skip ci] sync: {today}",
+        ],
+        check=True,
+    )
+    subprocess.run(
+        [
+            "git",
+            "push",
+            "-q",
+            f"https://{cfg.git_oauth_token}@github.com/androidtrackers/aosp-tracker.git",
+            "HEAD:master",
+        ],
+        check=True,
+    )
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--parse-only", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--send-telegram", action="store_true")
+    parser.add_argument("--push", action="store_true")
+    parser.add_argument("--max-telegram-messages", type=int, default=20)
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    cfg = Settings(
+        bot_token=os.environ.get("bottoken", ""),
+        git_oauth_token=os.environ.get("XFU", ""),
+    )
+
+    send_telegram = args.send_telegram and not args.dry_run
+    push = args.push and not args.dry_run
+
+    with Session() as session:
+        try:
+            branches, tags = fetch_refs(session, cfg)
+            bulletin = fetch_security_bulletin(session, cfg)
+            if args.parse_only:
+                print(
+                    f"Parsed branches={len(branches)} tags={len(tags)} latest_security_patch={bulletin.latest}"
+                )
+                return 0
+            update_refs_files(
+                session,
+                "branches",
+                branches,
+                cfg,
+                send_telegram,
+                args.max_telegram_messages,
+            )
+            update_refs_files(
+                session, "tags", tags, cfg, send_telegram, args.max_telegram_messages
+            )
+            update_security_patch(session, bulletin, cfg, send_telegram)
+            if push:
+                git_commit_push(cfg)
+            return 0
+        except Exception as error:
+            print(f"Run failed safely: {error}")
+            return 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
