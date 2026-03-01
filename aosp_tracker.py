@@ -196,8 +196,6 @@ def update_security_patch(
 
 
 def git_commit_push(cfg: Settings) -> None:
-    if not cfg.git_oauth_token:
-        raise RuntimeError("XFU is required")
     today = str(date.today())
     subprocess.run(["git", "add", "branches", "tags", "security_patch"], check=True)
     subprocess.run(
@@ -213,16 +211,19 @@ def git_commit_push(cfg: Settings) -> None:
         ],
         check=True,
     )
-    subprocess.run(
-        [
+    if cfg.git_oauth_token:
+        push_command = [
             "git",
             "push",
             "-q",
             f"https://{cfg.git_oauth_token}@github.com/androidtrackers/aosp-tracker.git",
             "HEAD:master",
-        ],
-        check=True,
-    )
+        ]
+    elif os.environ.get("GITHUB_ACTIONS") == "true":
+        push_command = ["git", "push", "-q", "origin", "HEAD:master"]
+    else:
+        raise RuntimeError("XFU is required outside GitHub Actions")
+    subprocess.run(push_command, check=True)
 
 
 def parse_args() -> argparse.Namespace:

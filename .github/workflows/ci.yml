@@ -8,6 +8,8 @@ on:
 jobs:
   run_tracker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -18,5 +20,4 @@ jobs:
       - name: Run tracker
         env:
           bottoken: ${{ secrets.BOTTOKEN }}
-          XFU: ${{ secrets.XFU }}
         run: uv run aosp_tracker.py --send-telegram --push
