@@ -42,6 +42,10 @@ class SecurityBulletinInfo:
     patch: str
 
 
+class UpstreamUnavailableError(RuntimeError):
+    pass
+
+
 def read_lines(file_path: Path) -> list[str]:
     if not file_path.exists():
         return []
@@ -66,7 +70,7 @@ def fetch_url(session: Session, url: str, cfg: Settings) -> Response:
             last_error = error
             if attempt < cfg.retry_attempts:
                 sleep(cfg.retry_delay_seconds * attempt)
-    raise RuntimeError(
+    raise UpstreamUnavailableError(
         f"GET {url} failed after {cfg.retry_attempts} attempts: {last_error}"
     )
 
@@ -279,6 +283,11 @@ def main() -> int:
             if push:
                 git_commit_push(cfg)
             return 0
+        except UpstreamUnavailableError as error:
+            print(f"Run skipped due to upstream outage: {error}")
+            if os.environ.get("GITHUB_ACTIONS") == "true":
+                return 0
+            return 1
         except Exception as error:
             print(f"Run failed safely: {error}")
             return 1
