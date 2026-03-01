@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  run_tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Run tracker
+        env:
+          bottoken: ${{ secrets.BOTTOKEN }}
+          XFU: ${{ secrets.XFU }}
+        run: uv run aosp_tracker.py --send-telegram --push
