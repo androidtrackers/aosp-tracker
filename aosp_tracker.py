@@ -197,7 +197,16 @@ def update_security_patch(
 
 def git_commit_push(cfg: Settings) -> None:
     today = str(date.today())
-    subprocess.run(["git", "add", "branches", "tags", "security_patch"], check=True)
+    tracked_files = ["branches", "tags", "security_patch"]
+    subprocess.run(["git", "add", *tracked_files], check=True)
+    staged_diff = subprocess.run(
+        ["git", "diff", "--cached", "--quiet", "--", *tracked_files], check=False
+    )
+    if staged_diff.returncode == 0:
+        print("No tracked changes to commit")
+        return
+    if staged_diff.returncode != 1:
+        raise RuntimeError("Failed to inspect staged git changes")
     subprocess.run(
         [
             "git",
