@@ -154,9 +154,7 @@ def fetch_security_bulletin(session: Session, cfg: Settings) -> SecurityBulletin
         if not isinstance(href_attr, str):
             continue
         href = href_attr
-        if "/docs/security/bulletin/" not in href:
-            continue
-        match = re.search(r"(\d{4}-\d{2}-\d{2})/?$", href)
+        match = re.search(r"^/docs/security/bulletin/\d{4}/(\d{4}-\d{2}-\d{2})/?$", href)
         if match:
             bulletin_links.append((match.group(1), href))
     if not bulletin_links:
@@ -174,6 +172,20 @@ def fetch_security_bulletin(session: Session, cfg: Settings) -> SecurityBulletin
     patch_levels = sorted(set(re.findall(r"\b\d{4}-\d{2}-(?:01|05)\b", detail_text)))
     patch = " | ".join(patch_levels) if patch_levels else latest
     return SecurityBulletinInfo(latest=latest, link=link, patch=patch)
+
+
+def fetch_bulletin_links(session: Session, cfg: Settings, bulletin_date: str) -> list[str]:
+    bulletin_page = BeautifulSoup(
+        fetch_url(session, cfg.bulletin_index_url, cfg).content, "html.parser"
+    )
+    return sorted(
+        {
+            f"https://source.android.com{href}"
+            for item in bulletin_page.find_all("a", href=True)
+            if isinstance((href := item.get("href")), str)
+            and re.search(rf"^/docs/security/bulletin(?:/[^/]+)?/\d{{4}}/{re.escape(bulletin_date)}/?$", href)
+        }
+    )
 
 
 def update_security_patch(
@@ -195,7 +207,12 @@ def update_security_patch(
     if not send_telegram:
         return
 
-    message = f"New Security Patch detected! [{bulletin.latest}]({bulletin.link})\n__Patch__: {bulletin.patch}\n"
+    bulletin_links = "\n".join(f"- {url}" for url in fetch_bulletin_links(session, cfg, bulletin.latest))
+    message = (
+        f"New Security Patch detected! [{bulletin.latest}]({bulletin.link})\n"
+        f"__Patch__: {bulletin.patch}\n"
+        f"__Bulletins__:\n{bulletin_links}\n"
+    )
     post_to_telegram(session, message, cfg)
 
 
