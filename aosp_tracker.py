@@ -26,7 +26,7 @@ from requests.exceptions import RequestException
 class Settings:
     refs_url: str = "https://android.googlesource.com/platform/frameworks/base/+refs"
     refs_base_url: str = "https://android.googlesource.com/platform/frameworks/base/+"
-    bulletin_index_url: str = "https://source.android.com/docs/security/bulletin"
+    bulletin_index_url: str = "https://source.android.com/docs/security/bulletin/asb-overview"
     telegram_chat: str = "@aosptracker"
     bot_token: str = ""
     git_oauth_token: str = ""
